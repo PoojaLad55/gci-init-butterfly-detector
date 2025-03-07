@@ -1,0 +1,4 @@
+Hardware:
+(For pi4uplod.py)
+- A 'config' folder with the 'service-acc-file.json' included
+- An .env file pointing to the config folder and service credentials json.
