@@ -3,6 +3,7 @@ import numpy as np
 from time import sleep
 from methods import bounding_box, bbox, resize_image
 
+frame_size = 240
 
 cap = cv2.VideoCapture("Bug.mp4")  # Use 0 for webcam, or replace with video file path
 
@@ -13,7 +14,7 @@ if not ret:
     cap.release()
     exit()
 
-prev_frame = resize_image(prev_frame)
+prev_frame = resize_image(prev_frame, dim = frame_size)
 prev_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
 
 while True:
@@ -21,7 +22,7 @@ while True:
     if not ret:
         break
 
-    frame = resize_image(frame)
+    frame = resize_image(frame, dim = frame_size)
     
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     flow = cv2.calcOpticalFlowFarneback(prev_gray, gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
@@ -37,7 +38,6 @@ while True:
     frame, cropped_image = bbox(frame, filtered_bboxes)
 
     # Display the frame with bounding boxes
-    cv2.imshow("cropped", cropped_image)
     cv2.imshow("Movement Detection", frame)
     sleep(0.1)
 

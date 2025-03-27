@@ -36,7 +36,7 @@ def bounding_box(contours):
         for j, bbox2 in enumerate(bounding_boxes):
             if i != j:
                 iou = compute_iou(bbox1, bbox2)
-                if iou > 0.50:  # If IoU > 50%
+                if iou > 0.60:  # If IoU > 50%
                     if contourArea(contour) < contourArea(contours[j]):
                         keep = False
                         break
@@ -45,6 +45,10 @@ def bounding_box(contours):
     
     return filtered_bboxes
 
+def image_dim(image, maxWidth = 56, maxHeight = 63):
+    if image.shape[0] > maxWidth and image.shape[1] > maxHeight:
+        return True
+
 def bbox(frame, filtered_bboxes, output_dir = "cropped_images", frame_count = 0):
     og_frame = frame
     cropped_image = frame
@@ -52,8 +56,10 @@ def bbox(frame, filtered_bboxes, output_dir = "cropped_images", frame_count = 0)
         x, y, w, h = bbox
         cropped_image = og_frame[y:y+h, x:x+w]
         cropped_path = os.path.join("/".join(file_name(output_dir,".png")))
-        imwrite(cropped_path, cropped_image)
-        rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        if image_dim(cropped_image):
+            
+            # imwrite(cropped_path, cropped_image)
+            rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
     
     return frame, cropped_image
 
