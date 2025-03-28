@@ -5,7 +5,7 @@ from methods import bounding_box, bbox, resize_image
 
 frame_size = 240
 
-cap = cv2.VideoCapture("Bug.mp4")  # Use 0 for webcam, or replace with video file path
+cap = cv2.VideoCapture(0)  # Use 0 for webcam, or replace with video file path
 
 # Read the first frame to initialize
 ret, prev_frame = cap.read()
@@ -38,7 +38,7 @@ while True:
     frame, cropped_image = bbox(frame, filtered_bboxes)
 
     # Display the frame with bounding boxes
-    cv2.imshow("Movement Detection", frame)
+    # cv2.imshow("Movement Detection", frame)
     sleep(0.1)
 
     # Update the previous frame for the next iteration

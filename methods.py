@@ -58,8 +58,8 @@ def bbox(frame, filtered_bboxes, output_dir = "cropped_images", frame_count = 0)
         cropped_path = os.path.join("/".join(file_name(output_dir,".png")))
         if image_dim(cropped_image):
             
-            # imwrite(cropped_path, cropped_image)
-            rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            imwrite(cropped_path, cropped_image)
+            #rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
     
     return frame, cropped_image
 
