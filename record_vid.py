@@ -1,41 +1,49 @@
-import cv2 
+import cv2 as cv
+from methods import file_name
+import os
+import sys
+import time
+from time import sleep
 
-video = cv2.VideoCapture(0) 
-   
-if (video.isOpened() == False):  
-    print("Error reading video file") 
-   
-frame_width = int(video.get(3)) 
-frame_height = int(video.get(4)) 
-   
-size = (frame_width, frame_height) 
-   
-result = cv2.VideoWriter('filename.avi',  
-                         cv2.VideoWriter_fourcc(*'MJPG'), 
-                         10, size) 
-    
-while(True): 
-    ret, frame = video.read() 
-  
-    if ret == True:  
-  
-        result.write(frame) 
-        cv2.imshow('Frame', frame) 
+cap = cv.VideoCapture(0)
 
-        if cv2.waitKey(1) & 0xFF == ord('s'): 
-            break
-  
-    # Break the loop 
-    else: 
+max_time = 50
+try:
+    max_time = int(sys.argv[2])
+except:
+    max_time = 50
+
+# Define the codec and create VideoWriter object
+fourcc = cv.VideoWriter_fourcc(*'XVID')
+frame_size = (240,240)
+filename = os.path.join('/'.join(file_name(f'{sys.argv[1]}/rec_videos','.avi'))) 
+out = cv.VideoWriter(filename, fourcc, 20.0, frame_size)
+start_time = time.time()
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        print("Can't receive frame (stream end?). Exiting ...")
         break
-  
-# When everything done, release  
-# the video capture and video  
-# write objects 
-video.release() 
-result.release() 
     
-# Closes all the frames 
-cv2.destroyAllWindows() 
-   
-print("The video was successfully saved") 
+    frame = cv.flip(frame, 0)
+    frame = cv.resize(frame,frame_size)
+
+    # write the flipped frame
+    out.write(frame)
+    
+    current_time = time.time() - start_time
+    
+    sleep(0.1)
+    if current_time >= max_time:
+        print("times up")
+        break
+
+    #cv.imshow('frame', frame)
+    if cv.waitKey(1) == ord('q'):
+        break
+
+# Release everything if job is finished
+cap.release()
+out.release()
+cv.destroyAllWindows()
