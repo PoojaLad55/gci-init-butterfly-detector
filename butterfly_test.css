@@ -1,0 +1,50 @@
+/* App.css */
+html, body {
+    overscroll-behavior: none;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  
+  body {
+    min-height: 100vh;
+    /* Using background gradient that can adapt to content length */
+    background: linear-gradient(180deg, rgba(19, 33, 82, 1) 0%, rgba(19, 33, 82, 1) 2%, rgba(35, 198, 134, 1) 100%);
+    background-attachment: fixed; /* Makes the gradient work better with variable content */
+  }
+  
+  .butterfly-garden {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .top-bar {
+    position: sticky; /* Changed from fixed for better React compatibility */
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #faf9f6;
+    color: black;
+    padding: 15px;
+    text-align: left;
+    font-size: 18px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 20px;
+    /* Actual content will determine the scrollable area */
+  }
+  
+  .section {
+    min-height: 80vh; /* Example height for content sections */
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+  }
