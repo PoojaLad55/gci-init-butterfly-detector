@@ -21,7 +21,6 @@ const getDays = async(weather_data_collection)=>{
         //setDate sets the day in the Date object, getDate grabs the day
         now.setDate(now.getDate()-1)
         currentDate = now.toISOString().slice(0,10)
-        console.log(currentDate)
         date_entry_cursor = weather_data_collection.find({"date":currentDate})
     }
     return days
@@ -37,17 +36,19 @@ const getDays = async(weather_data_collection)=>{
     //check if current day is in database, if not then continue going backwards and get number of days not in db. 
         const weather_data_collection = db.collection(process.env.WEATHER_COLLECTION_NAME)
         const days = await getDays(weather_data_collection)
+        console.log('DAYS: ',days)
         let now = new Date()
         let end_date = now.toISOString().slice(0,10)
         now.setDate(now.getDate()-days)
         let start_date = now.toISOString().slice(0,10)
+        console.log(`start date: ${start_date} end date: ${end_date}`)
         if(days>0){
             try{
             
             const params = {
                 "latitude":  25.7501358009678,
                 "longitude": -80.37727024796885,
-                "hourly": ["temperature_2m", "relative_humidity_2m"],
+                "hourly": ["temperature_2m", "relative_humidity_2m","wind_speed_10m"],
                 // "past_Days":days,
                 "start_date" : start_date,
                 "end_date": end_date,
@@ -78,6 +79,7 @@ const getDays = async(weather_data_collection)=>{
                     ),
                     temperature2m: hourly.variables(0).valuesArray(),
                     relativeHumidity2m: hourly.variables(1).valuesArray(),
+                    windSpeed10m: hourly.variables(2).valuesArray(),
                 },
             };
 
@@ -86,19 +88,23 @@ const getDays = async(weather_data_collection)=>{
             let data = []
             let averageTemp = 0
             let averageHumidity = 0
+            let averageWindSpeed = 0
             for (let i = 0; i < weatherData.hourly.time.length; i++) {
             //every 25 entries (data for each day) add up the averages
             averageTemp+=parseInt(weatherData.hourly.temperature2m[i])
             averageHumidity+=parseInt(weatherData.hourly.relativeHumidity2m[i])
+            averageWindSpeed+=parseInt(weatherData.hourly.windSpeed10m[i])
             if(i!=0 && i%25==0){
                 //calculate the average, theres 25 entries.
                 averageTemp = Math.floor(averageTemp/25)
                 averageHumidity = Math.floor(averageHumidity/25)
+                averageWindSpeed = Math.floor(averageWindSpeed/25)
                 let averageTempFarenheit =Math.floor((9/5 * averageTemp) + 32)
-                data.push({"date":weatherData.hourly.time[i].toISOString().slice(0,10),"temperature":averageTempFarenheit,"humidity":averageHumidity})
+                data.push({"date":weatherData.hourly.time[i].toISOString().slice(0,10),"temperature":averageTempFarenheit,"humidity":averageHumidity,"wind_speed":averageWindSpeed})
                 //set back to 0 for next date
                 averageTemp = 0
                 averageHumidity = 0
+                averageWindSpeed =0
             }
             
                 
@@ -122,15 +128,21 @@ const getDays = async(weather_data_collection)=>{
 
 
 const mergeButterflyWeatherData =async(db,weather_data,butterfly_data)=>{
+  console.log('weather data : ', weather_data)
+  console.log('butterfly data: ', butterfly_data)
   const weatherMap = new Map(weather_data.map(item=>[item.date,item]))
   let mergedArray = []
   mergedArray = butterfly_data.map(butterfly=>{
     const matchedWeatherData = weatherMap.get(butterfly.date)
+    //we should have data for all dates but just in case.
+    if( matchedWeatherData){
     return {
       ...butterfly,
-      temperature : matchedWeatherData.temperature ? matchedWeatherData.temperature : null,
-      humidity : matchedWeatherData.humidity? matchedWeatherData.humidity : null
+      temperature : matchedWeatherData.temperature ?  matchedWeatherData.temperature : null,
+      humidity : matchedWeatherData.humidity?  matchedWeatherData.humidity : null,
+      wind_speed : matchedWeatherData.wind_speed ? matchedWeatherData.wind_speed : null
     }
+}
   })
 
   const merged_collection = db.collection(process.env.MERGED_COLLECTION_NAME)
@@ -146,7 +158,6 @@ const mergeButterflyWeatherData =async(db,weather_data,butterfly_data)=>{
   
 }   
    
-
 
 
 
