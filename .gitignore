@@ -1,6 +1,5 @@
 .env
 .service-acc-file.json
-<<<<<<< Updated upstream
 hibiscus.mp4
 hibiscus2.mp4
 cropped_images/
@@ -10,4 +9,6 @@ motion_images/
 .fly/
 .alternate.sh.swp
 .note
->>>>>>> Stashed changes
+*.png
+*.MOV
+*.json
