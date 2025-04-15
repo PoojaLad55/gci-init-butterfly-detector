@@ -1,4 +1,4 @@
-require('dotenv').config()
+// require('dotenv').config()
 const {MongoClient} = require('mongodb')
 const { getWeatherData,getButterflies,mergeButterflyWeatherData} = require('./lib/getData')
 
@@ -21,7 +21,7 @@ async function run(){
         const butterfly_collection = db.collection(BUTTERFLY_COLLECTION_NAME)
 
         changeStream = butterfly_collection.watch()
-        console.log('MongoDB watch stream started')
+        console.log('MongoDB watch stream started. Updated version')
 
         //listens to any change
         changeStream.on('change',async (change)=>{
@@ -32,7 +32,7 @@ async function run(){
                 const butterfly_obj = change.fullDocument
                 const curr_confidence = butterfly_obj.confidence 
                 const butterfly_id = butterfly_obj._id
-                if(curr_confidence >= parseFloat(CONFIDENCE_LEVEL)){
+                if(curr_confidence && curr_confidence >= parseFloat(CONFIDENCE_LEVEL)){
                     console.log('Confidence Value accepted')
                     try{
                         //calls api to gete new weather data then returns updated list

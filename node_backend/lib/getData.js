@@ -109,7 +109,6 @@ const getDays = async(weather_data_collection)=>{
             
                 
                 }
-                console.log(data)
                 await weather_data_collection.insertMany(data)
                 console.log('inserted new weather data')
                 //return weather collection after update
@@ -128,8 +127,6 @@ const getDays = async(weather_data_collection)=>{
 
 
 const mergeButterflyWeatherData =async(db,weather_data,butterfly_data)=>{
-  console.log('weather data : ', weather_data)
-  console.log('butterfly data: ', butterfly_data)
   const weatherMap = new Map(weather_data.map(item=>[item.date,item]))
   let mergedArray = []
   mergedArray = butterfly_data.map(butterfly=>{
@@ -137,7 +134,8 @@ const mergeButterflyWeatherData =async(db,weather_data,butterfly_data)=>{
     //we should have data for all dates but just in case.
     if( matchedWeatherData){
     return {
-      ...butterfly,
+      species:butterfly.species,
+      date:butterfly.date,
       temperature : matchedWeatherData.temperature ?  matchedWeatherData.temperature : null,
       humidity : matchedWeatherData.humidity?  matchedWeatherData.humidity : null,
       wind_speed : matchedWeatherData.wind_speed ? matchedWeatherData.wind_speed : null
